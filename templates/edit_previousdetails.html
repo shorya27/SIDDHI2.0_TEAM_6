@@ -1,0 +1,281 @@
+{% extends "base.html" %} 
+
+{% block title %}Edit Previous Breast Surgery Details{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles1.css')}}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #000;
+            background-color: #fff;
+            padding: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 2px solid #000;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #333;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #000;
+        }
+
+        label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        input[type="checkbox"] {
+            margin: 0 8px 0 4px;
+            cursor: pointer;
+        }
+
+        .date-field {
+            display: none;
+            margin-top: 5px;
+            margin-left: 25px; /* Indent to align with checkbox */
+        }
+
+        input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px; /* Add some spacing above date field */
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #000;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .submit-button {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+            padding: 15px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .submit-button:hover {
+            background-color: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 600px) {
+            form {
+                margin: 0 10px;
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 20px;
+                margin-bottom: 30px;
+            }
+
+            .submit-button {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            label {
+                font-size: 14px;
+            }
+
+            input[type="date"] {
+                font-size: 13px;
+                padding: 10px;
+            }
+        }
+
+        
+        /* Flash Message Styles */
+        .flash-message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            color: #fff;
+        }
+
+        .flash-message.success {
+            background-color: #4CAF50; /* Green for success */
+        }
+
+        .flash-message.error {
+            background-color: #f44336; /* Red for error */
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <form method="POST" action="{{ url_for('edit_previousdetails', unid=UNID) }}">
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <input type="hidden" name="UNID" value="{{ UNID }}"> <!-- Pass UNID here -->
+
+        <h1>Edit Previous Breast Surgery Details</h1>
+
+        <!-- Breast Biopsy Section -->
+        <label>Breast Biopsy</label>
+        <div>
+            <input type="checkbox" name="biopsy_left" onclick="toggleDateField(this, 'biopsy_left_date')" 
+                   {% if surgery_details.biopsy_left %}checked{% endif %}> Left Breast
+            <div id="biopsy_left_date" class="date-field" 
+                 style="display: {% if surgery_details.biopsy_left_date %}block{% else %}none{% endif %};">
+                <input type="date" name="biopsy_left_date" value="{{ surgery_details.biopsy_left_date or '' }}">
+            </div>
+        </div>
+        <div>
+            <input type="checkbox" name="biopsy_right" onclick="toggleDateField(this, 'biopsy_right_date')" 
+                   {% if surgery_details.biopsy_right %}checked{% endif %}> Right Breast
+            <div id="biopsy_right_date" class="date-field" 
+                 style="display: {% if surgery_details.biopsy_right_date %}block{% else %}none{% endif %};">
+                <input type="date" name="biopsy_right_date" value="{{ surgery_details.biopsy_right_date or '' }}">
+            </div>
+        </div>
+
+        <!-- Mastectomy Section -->
+        <label>Mastectomy</label>
+        <div>
+            <input type="checkbox" name="mastectomy_left" onclick="toggleDateField(this, 'mastectomy_left_date')" 
+                   {% if surgery_details.mastectomy_left %}checked{% endif %}> Left Breast
+            <div id="mastectomy_left_date" class="date-field" 
+                 style="display: {% if surgery_details.mastectomy_left_date %}block{% else %}none{% endif %};">
+                <input type="date" name="mastectomy_left_date" value="{{ surgery_details.mastectomy_left_date or '' }}">
+            </div>
+        </div>
+        <div>
+            <input type="checkbox" name="mastectomy_right" onclick="toggleDateField(this, 'mastectomy_right_date')" 
+                   {% if surgery_details.mastectomy_right %}checked{% endif %}> Right Breast
+            <div id="mastectomy_right_date" class="date-field" 
+                 style="display: {% if surgery_details.mastectomy_right_date %}block{% else %}none{% endif %};">
+                <input type="date" name="mastectomy_right_date" value="{{ surgery_details.mastectomy_right_date or '' }}">
+            </div>
+        </div>
+
+        <!-- Lumpectomy Section -->
+        <label>Lumpectomy (for CA Breast)</label>
+        <div>
+            <input type="checkbox" name="lumpectomy_left" onclick="toggleDateField(this, 'lumpectomy_left_date')" 
+                   {% if surgery_details.lumpectomy_left %}checked{% endif %}> Left Breast
+            <div id="lumpectomy_left_date" class="date-field" 
+                 style="display: {% if surgery_details.lumpectomy_left_date %}block{% else %}none{% endif %};">
+                <input type="date" name="lumpectomy_left_date" value="{{ surgery_details.lumpectomy_left_date or '' }}">
+            </div>
+        </div>
+        <div>
+            <input type="checkbox" name="lumpectomy_right" onclick="toggleDateField(this, 'lumpectomy_right_date')" 
+                   {% if surgery_details.lumpectomy_right %}checked{% endif %}> Right Breast
+            <div id="lumpectomy_right_date" class="date-field" 
+                 style="display: {% if surgery_details.lumpectomy_right_date %}block{% else %}none{% endif %};">
+                <input type="date" name="lumpectomy_right_date" value="{{ surgery_details.lumpectomy_right_date or '' }}">
+            </div>
+        </div>
+
+        <!-- Breast Implants Section -->
+        <label>Breast Implants</label>
+        <div>
+            <input type="checkbox" id="implant_left" onclick="toggleImplantOptions(this, 'implant_left_date')" 
+                   {% if surgery_details.implant_left %}checked{% endif %}> Left Breast
+            <div id="implant_left_date" class="date-field" 
+                 style="display: {% if surgery_details.implant_left_date %}block{% else %}none{% endif %};">
+                <div>
+                    <input type="checkbox" name="implant_left_silicon" onclick="showDate('left_implant_date')" 
+                           {% if surgery_details.implant_left_silicon %}checked{% endif %}> Silicon
+                    <input type="checkbox" name="implant_left_saline" onclick="showDate('left_implant_date')" 
+                           {% if surgery_details.implant_left_saline %}checked{% endif %}> Saline
+                </div>
+                <input type="date" name="implant_left_date" value="{{ surgery_details.implant_left_date or '' }}" 
+                       id="left_implant_date" style="display: {% if surgery_details.implant_left_date %}block{% else %}none{% endif %};">
+            </div>
+        </div>
+        <div>
+            <input type="checkbox" id="implant_right" onclick="toggleImplantOptions(this, 'implant_right_date')" 
+                   {% if surgery_details.implant_right %}checked{% endif %}> Right Breast
+            <div id="implant_right_date" class="date-field" 
+                 style="display: {% if surgery_details.implant_right_date %}block{% else %}none{% endif %};">
+                <div>
+                    <input type="checkbox" name="implant_right_silicon" onclick="showDate('right_implant_date')" 
+                           {% if surgery_details.implant_right_silicon %}checked{% endif %}> Silicon
+                    <input type="checkbox" name="implant_right_saline" onclick="showDate('right_implant_date')" 
+                           {% if surgery_details.implant_right_saline %}checked{% endif %}> Saline
+                </div>
+                <input type="date" name="implant_right_date" value="{{ surgery_details.implant_right_date or '' }}" 
+                       id="right_implant_date" style="display: {% if surgery_details.implant_right_date %}block{% else %}none{% endif %};">
+            </div>
+        </div>
+
+        <button type="submit" class="submit-button">Save Changes</button>
+    </form>
+
+    <script>
+        // JavaScript functions (as defined in the original template)
+        function toggleDateField(checkbox, dateFieldId) {
+            const dateField = document.getElementById(dateFieldId);
+            dateField.style.display = checkbox.checked ? 'block' : 'none';
+        }
+
+        function toggleImplantOptions(checkbox, dateFieldId) {
+            const dateField = document.getElementById(dateFieldId);
+            dateField.style.display = checkbox.checked ? 'block' : 'none';
+            const implantCheckboxes = dateField.querySelectorAll('input[type="checkbox"]');
+            implantCheckboxes.forEach(implCheckbox => implCheckbox.checked = false);
+            dateField.querySelector('input[type="date"]').style.display = 'none';
+        }
+
+        function showDate(dateFieldId) {
+            const dateField = document.getElementById(dateFieldId);
+            const checkboxes = dateField.parentElement.querySelectorAll('input[type="checkbox"]');
+            const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+            dateField.style.display = anyChecked ? 'block' : 'none';
+        }
+    </script>
+{% endblock %}

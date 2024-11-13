@@ -1,0 +1,253 @@
+{% extends "base.html" %} 
+
+{% block title %}Previous Therapy Sessions Details{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles1.css')}}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #000;
+            background-color: #fff;
+            padding: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 2px solid #000;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #333;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #000;
+        }
+
+        /* Form Section Styling */
+        .therapy-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .therapy-section:last-child {
+            border-bottom: none;
+        }
+
+        label {
+            display: block;
+            font-size: 16px;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .comments-label {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+            font-weight: normal;
+        }
+
+        /* Checkbox Group Styling */
+        .checkbox-group {
+            margin: 10px 0;
+        }
+
+        input[type="radio"] {
+            margin: 0 8px 0 4px;
+            cursor: pointer;
+        }
+
+        /* Text Input Styling */
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #000;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* File Input Styling */
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 20px;
+            border: 1px dashed #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #f8f8f8;
+        }
+
+        input[type="file"]:hover {
+            border-color: #666;
+            background-color: #f0f0f0;
+        }
+
+        /* Submit Button Styling */
+        .submit-button {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+            padding: 15px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .submit-button:hover {
+            background-color: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 600px) {
+            form {
+                margin: 0 10px;
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 20px;
+                margin-bottom: 30px;
+            }
+
+            label {
+                font-size: 14px;
+            }
+
+            .comments-label {
+                font-size: 13px;
+            }
+
+            .submit-button {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            form {
+                padding: 10px;
+            }
+
+            input[type="text"],
+            input[type="file"] {
+                padding: 8px;
+            }
+        }
+        
+        /* Flash Message Styles */
+        .flash-message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            color: #fff;
+        }
+
+        .flash-message.success {
+            background-color: #4CAF50; /* Green for success */
+        }
+
+        .flash-message.error {
+            background-color: #f44336; /* Red for error */
+        }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+    <form method="POST" enctype="multipart/form-data">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <input type="hidden" name="UNID" value="{{ UNID }}"> <!-- Pass UNID here -->
+        <h1>Previous Therapy Sessions Details</h1>
+        <div class="therapy-section">
+            <label>Radiation Therapy</label>
+            <input type="radio" name="radiation_preference" value="yes" onclick="toggleUpload('radiation', true)"> Yes
+            <input type="radio" name="radiation_preference" value="no" onclick="toggleUpload('radiation', false)"> No
+            <label class="comments-label">Add Comments</label>
+            <input type="text" name="radiation_comments" placeholder="Comments...">
+            <input type="file" name="radiation_image" accept=".pdf,.jpg,.jpeg,.png" id="radiation_upload" style="display: none;">
+        </div>
+
+        <div class="therapy-section">
+            <label>Chemotherapy</label>
+            <input type="radio" name="chemotherapy_preference" value="yes" onclick="toggleUpload('chemotherapy', true)"> Yes
+            <input type="radio" name="chemotherapy_preference" value="no" onclick="toggleUpload('chemotherapy', false)"> No
+            <label class="comments-label">Add Comments</label>
+            <input type="text" name="chemotherapy_comments" placeholder="Comments...">
+            <input type="file" name="chemotherapy_image" accept=".pdf,.jpg,.jpeg,.png" id="chemotherapy_upload" style="display: none;">
+        </div>
+
+        <div class="therapy-section">
+            <label>Hormonal Therapy</label>
+            <input type="radio" name="hormonal_preference" value="yes" onclick="toggleUpload('hormonal', true)"> Yes
+            <input type="radio" name="hormonal_preference" value="no" onclick="toggleUpload('hormonal', false)"> No
+            <label class="comments-label">Add Comments</label>
+            <input type="text" name="hormonal_comments" placeholder="Comments...">
+            <input type="file" name="hormonal_image" accept=".pdf,.jpg,.jpeg,.png" id="hormonal_upload" style="display: none;">
+        </div>
+
+        <button type="submit" class="submit-button">Submit</button>
+    </form>
+
+    <script>
+        function toggleUpload(therapy, show) {
+            const uploadInput = document.getElementById(therapy + '_upload');
+            if (show) {
+                uploadInput.style.display = 'block';
+            } else {
+                uploadInput.style.display = 'none';
+                uploadInput.value = ''; // Reset file input if "No" is selected
+            }
+        }
+    </script>
+{% endblock %}

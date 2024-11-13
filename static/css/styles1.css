@@ -1,0 +1,101 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+}
+
+form {
+    max-width: 500px;
+    width: 90%;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 2rem auto;
+}
+
+label {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    display: block;
+    font-weight: bold;
+}
+
+input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+input[type="submit"] {
+    padding: 10px 15px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+input[type="submit"]:hover {
+    background: #0056b3;
+}
+
+.symptom-group {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+.symptom-title {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.checkbox-group {
+    margin: 10px 0;
+}
+
+/* Styling for "Add Comments" label */
+.comments-label {
+    font-style: italic;
+    color: #666;
+    font-weight: normal;
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    form {
+        padding: 15px;
+    }
+
+    input[type="text"] {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    form {
+        max-width: 95%;
+    }
+
+    input[type="text"] {
+        font-size: 0.85rem;
+    }
+
+    input[type="submit"] {
+        font-size: 0.9rem;
+    }
+}

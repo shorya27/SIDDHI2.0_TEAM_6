@@ -1,0 +1,461 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Details{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="../static/css/styles2.css">
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}
+<div class="main-container">
+    <h2 class="title">Patient Details</h2>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Personal Details -->
+    <div class="details-section">
+        <h3>Personal Details <a href="{{ url_for('edit_personaldetails', unid=patient.UNID) }}"
+                class="edit-link">Edit</a></h3>
+        <ul>
+            <li><strong>Patient Name:</strong> {{ patient.patient_name }}</li>
+            <li><strong>UNID:</strong> {{ patient.UNID }}</li>
+            <li><strong>Address:</strong> {{ patient.address }}</li>
+            <li><strong>Phone Number:</strong> {{ patient.phone_number }}</li>
+            <li><strong>Date of Birth:</strong> {{ patient.dob }}</li>
+            <li><strong>Insurance Name and Details:</strong> {{ patient.insurance_company }} (ID: {{
+                patient.insurance_id }})</li>
+            <li><strong>Date of Breast Cancer Diagnosis:</strong> {{ patient.diagnosis_date or "N/A" }}</li>
+            <li><strong>Age at Diagnosis:</strong> {{ patient.age_at_diagnosis or "N/A" }}</li>
+        </ul>
+    </div>
+
+    <!-- Symptoms -->
+    <div class="details-section">
+        <h3>Do you currently have:
+            <a href="{% if symptoms %}{{ url_for('edit_currenthealth', unid=patient.UNID) }}{% else %}{{ url_for('currenthealth', UNID=patient.UNID) }}{% endif %}"
+                class="edit-link">Edit</a>
+        </h3>
+        <table>
+            <tr>
+                <th>Right Breast</th>
+                <th>Left Breast</th>
+            </tr>
+            <tr>
+                <td>{{ symptoms.right_symptoms or "N/A" }}</td>
+                <td>{{ symptoms.left_symptoms or "N/A" }}</td>
+            </tr>
+            <tr>
+                <td>{{ symptoms.right_other_symptoms or "N/A" }}</td>
+                <td>{{ symptoms.left_other_symptoms or "N/A" }}</td>
+            </tr>
+            <tr>
+        </table>
+    </div>
+
+    <!-- Previous Breast Surgery Details -->
+    <div class="details-section">
+        <h3>Previous Breast Surgery Details
+            <a href="{% if surgeries %}{{ url_for('edit_previousdetails', unid=patient.UNID) }}{% else %}{{ url_for('previousdetails', UNID=patient.UNID) }}{% endif %}"
+                class="edit-link">Edit</a>
+        </h3>
+        <table>
+            <tr>
+                <th>Surgery Type</th>
+                <th>left Breast</th>
+                <th>right Breast</th>
+                <th> left Date</th>
+                <th> right Date</th>
+
+            </tr>
+            <tr>
+                <td>Breast Biopsy</td>
+                <td>{{ surgeries.biopsy_left or "N/A" }}</td>
+                <td>{{ surgeries.biopsy_right or "N/A" }}</td>
+                <td>{{ surgeries.biopsy_left_date or "N/A" }}</td>
+                <td>{{ surgeries.biopsy_right_date or "N/A" }}</td>
+
+            </tr>
+            <tr>
+                <td>Mastectomy</td>
+                <td>{{ surgeries.mastectomy_left or "N/A" }}</td>
+                <td>{{ surgeries.mastectomy_right or "N/A" }}</td>
+                <td>{{ surgeries.mastectomy_left_date or "N/A" }}</td>
+                <td>{{ surgeries.mastectomy_right_date or "N/A" }}</td>
+
+            </tr>
+            <tr>
+                <td>Lumpectomy (for CA Breast)</td>
+                <td>{{ surgeries.lumpectomy_left or "N/A" }}</td>
+                <td>{{ surgeries.lumpectomy_right or "N/A" }}</td>
+                <td>{{ surgeries.lumpectomy_left_date or "N/A" }}</td>
+                <td>{{ surgeries.lumpectomy_right_date or "N/A" }}</td>
+
+            </tr>
+            <tr>
+                <td>Breast Implants (Silicon/Saline)</td>
+                <td>Silicon:{{ surgeries.implant_left_silicon or "N/A" }}Saline:{{ surgeries.implant_left_saline or
+                    "N/A" }}</td>
+                <td>Silicon:{{ surgeries.implant_right_silicon or "N/A" }}Saline:{{ surgeries.implant_right_saline or
+                    "N/A" }}</td>
+                <td>{{ surgeries.implant_left_date or "N/A" }}</td>
+                <td>{{ surgeries.implant_right_date or "N/A" }}</td>
+
+            </tr>
+        </table>
+    </div>
+
+    <!-- Previous Therapy Sessions Details -->
+    <div class="details-section">
+        <h3>Previous Therapy Sessions
+            <a href="{% if therapies %}{{ url_for('edit_previoustherapies', unid=patient.UNID) }}{% else %}{{ url_for('previoustherapies', UNID=patient.UNID) }}{% endif %}"
+                class="edit-link">Edit</a>
+        </h3>
+        <table>
+            <tr>
+                <th>Therapy</th>
+                <th>Yes/No</th>
+                <th>Details</th>
+                <th>Image</th>
+            </tr>
+            <tr>
+                <td>Radiation Therapy</td>
+                <td>{{ "Yes" if therapies.radiation_preference == "yes" else "no" }}</td>
+                <td>{{ therapies.radiation_comments or "N/A" }}</td>
+                <td>{% if therapies.radiation_image %}
+                    <img src="{{ url_for('static', filename=therapies.radiation_image.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                    </img>
+                </td>
+            </tr>
+            <tr>
+                <td>Chemo Therapy</td>
+                <td>{{ "Yes" if therapies.chemotherapy_preference == "yes" else "No" }}</td>
+                <td>{{ therapies.chemotherapy_comments or "N/A" }}</td>
+                <td>
+                    {% if therapies.chemotherapy_image %}
+                    <img src="{{ url_for('static', filename=therapies.chemotherapy_image.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+            </tr>
+
+            <tr>
+                <td>Hormonal Therapy</td>
+                <td>{{ "Yes" if therapies.hormonal_preference == "yes" else "No" }}</td>
+                <td>{{ therapies.hormonal_comments or "N/A" }}</td>
+                <td>
+                    {% if therapies.hormonal_image %}
+                    <img src="{{ url_for('static', filename=therapies.hormonal_image.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Other Details -->
+    <div class="details-section">
+        <h3>Other Details
+            <a href="{% if other_details %}{{ url_for('edit_otherdetails', unid=patient.UNID) }}{% else %}{{ url_for('otherdetails', UNID=patient.UNID) }}{% endif %}"
+                class="edit-link">Edit</a>
+        </h3>
+        <table>
+            <tr>
+                <th>Detail</th>
+                <th>Yes</th>
+                <th>No</th>
+                <th>Comments</th>
+                <th>Image</th>
+            </tr>
+            <tr>
+                <td>Hysterectomy</td>
+                <td>{{ "Yes" if other_details.hysterectomy == "yes" else "" }}</td>
+                <td>{{ "No" if other_details.hysterectomy == "no" else "" }}</td>
+                <td>{{ other_details.hysterectomy_comments or "N/A" }}</td>
+                <td>
+                    {% if other_details.hysterectomy_image %}
+                    <img src="{{ url_for('static', filename=other_details.hysterectomy_image.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+            </tr>
+
+            <tr>
+                <td>Taking Hormones - Estrogen</td>
+                <td>{{ "Yes" if other_details.estrogen == "yes" else "" }}</td>
+                <td>{{ "No" if other_details.estrogen == "no" else "" }}</td>
+                <td>{{ other_details.estrogen_comments or "N/A" }}</td>
+                <td>
+                    {% if other_details.estrogen_image %}
+                    <img src="{{ url_for('static', filename=other_details.estrogen_image.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Taking Hormones - Progesterone</td>
+                <td>{{ "Yes" if other_details.progesterone == "yes" else "" }}</td>
+                <td>{{ "No" if other_details.progesterone == "no" else "" }}</td>
+                <td>{{ other_details.progesterone_comments or "N/A"}}</td>
+                <td>
+                    {% if other_details.progesterone_image %}
+                    <img src="{{ url_for('static', filename=other_details.progesterone_image.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+            </tr>
+
+        </table>
+        <li><strong>Age at menstrual onset :</strong> {{ other_details.menstrual_age }}</li>
+        <li><strong>Age at menopause:</strong> {{ other_details.menopause_age }}</li>
+        <li><strong>Number of pregnancy :</strong> {{ other_details.pregnancy_count }}</li>
+        <li><strong>Age at first pregnancy (Operator to enter details manually):</strong>
+            {{other_details.first_pregnancy_age}}</li>
+        <li><strong>Type of delivery - Normal / Surgery:</strong> {{ other_details.delivery_type }}</li>
+        <li><strong>Breastfeeding - Yes / No:</strong> {{ other_details.breastfeeding }}</li>
+
+    </div>
+
+    <!-- Family and Personal History -->
+    <div class="details-section">
+        <h3>Family and Personal History
+            <a href="{% if family_history %}{{ url_for('edit_familyhistory', unid=patient.UNID) }}{% else %}{{ url_for('familyhistory', UNID=patient.UNID) }}{% endif %}"
+                class="edit-link">Edit</a>
+        </h3>
+        <table>
+            <tr>
+                <th>History Detail</th>
+                <th>You</th>
+                <th>Family Member</th>
+                <th>Family Member Comment</th>
+            </tr>
+            <tr>
+                <td>Breast biopsy with benign diagnosis</td>
+                <td>{{ "Yes" if family_history.benign_biopsies_you == 1 else "N/A" }}</td>
+                <td>{{ "Yes" if family_history.benign_biopsies_family == 1 else "N/A" }}</td>
+                <td>{{ family_history.family_member_comment_1 or "N/A" }}</td>
+            </tr>
+            <tr>
+                <td>Number of benign biopsies</td>
+                <td>{{ family_history.benign_biopsies_count_you if family_history.benign_biopsies_you == 1 else "N/A" }}
+                </td>
+                <td>{{ family_history.benign_biopsies_count_family if family_history.benign_biopsies_family == 1 else
+                    "N/A" }}</td>
+                <td>{{ family_history.family_member_comment_1 or "N/A" }}</td>
+            </tr>
+            <tr>
+                <td>Breast biopsy with atypical hyperplasia</td>
+                <td>{{ "Yes" if family_history.biopsy_atypical_you == 1 else "N/A" }}</td>
+                <td>{{ "Yes" if family_history.biopsy_atypical_family == 1 else "N/A" }}</td>
+                <td>{{ family_history.family_member_comment_2 or "N/A"}}</td>
+            </tr>
+            <tr>
+                <td>Breast cancer diagnosis before age 50</td>
+                <td>{{ "Yes" if family_history.cancer_before_50_you == 1 else "N/A" }}</td>
+                <td>{{ "Yes" if family_history.cancer_before_50_family == 1 else "N/A" }}</td>
+                <td>{{ family_history.family_member_comment_3 or "N/A" }}</td>
+            </tr>
+            <tr>
+                <td>Breast cancer diagnosis after age 50</td>
+                <td>{{ "Yes" if family_history.cancer_after_50_you == 1 else "N/A" }}</td>
+                <td>{{ "Yes" if family_history.cancer_after_50_family == 1 else "N/A" }}</td>
+                <td>{{ family_history.family_member_comment_4 or "N/A" }}</td>
+            </tr>
+            <tr>
+                <td>Ovarian cancer</td>
+                <td>{{ "Yes" if family_history.ovarian_cancer_you == 1 else "N/A" }}</td>
+                <td>{{ "Yes" if family_history.ovarian_cancer_family == 1 else "N/A" }}</td>
+                <td>{{ family_history.family_member_comment_5 or "N/A" }}</td>
+            </tr>
+            <tr>
+                <td>Radiation treatment to the chest between ages 10-30 for Hodgkin’s Disease</td>
+                <td>{{ "Yes" if family_history.radiation_treatment_you == 1 else "N/A" }}</td>
+                <td>{{ "Yes" if family_history.radiation_treatment_family == 1 else "N/A" }}</td>
+                <td>{{family_history.family_member_comment_6 or "N/A"}}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Health History & Report Upload -->
+    <div class="details-section">
+        <h3>Health History & Report Upload <a href="{% if uploaded_files %}{{ url_for('edit_filescans', unid=patient.UNID) }}{% else %}{{ url_for('filescans', UNID=patient.UNID) }}{% endif %}"
+            class="edit-link">Edit</a></h3>
+        <table>
+            <tr>
+                <th>Report Name</th>
+                <th>Image</th>
+            </tr>
+            <tr>
+                <td>Biopsy Report</td>
+                <td>
+                    {% if uploaded_files.biopsy_report %}
+                    <img src="{{ url_for('static', filename=uploaded_files.biopsy_report.split('static/', 1)[1]) }}"
+                        alt="">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+
+            </tr>
+            <tr>
+                <td>Biomarker Report</td>
+                <td>
+                    {% if uploaded_files.biomarker_report %}
+                    <img src="{{ url_for('static', filename=uploaded_files.biomarker_report.split('static/', 1)[1]) }}"
+                        alt="">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Routine Report</td>
+                <td>
+                    {% if uploaded_files.routine_report %}
+                    <img src="{{ url_for('static', filename=uploaded_files.routine_report.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>X-ray Chest</td>
+                <td>
+                    {% if uploaded_files.xray_chest %}
+                    <img src="{{ url_for('static', filename=uploaded_files.xray_chest.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Ultrasound Breast</td>
+                <td>
+                    {% if uploaded_files.usg_breast %}
+                    <img src="{{ url_for('static', filename=uploaded_files.usg_breast.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Mammography Breast</td>
+                <td>
+                    {% if uploaded_files.mmg_breast %}
+                    <img src="{{ url_for('static', filename=uploaded_files.mmg_breast.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>MRI Breast</td>
+                <td>
+                    {% if uploaded_files.mri_breast %}
+                    <img src="{{ url_for('static', filename=uploaded_files.mri_breast.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Ultrasound Abdomen</td>
+                <td>
+                    {% if uploaded_files.usg_abdomen %}
+                    <img src="{{ url_for('static', filename=uploaded_files.usg_abdomen.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>CT Chest</td>
+                <td>
+                    {% if uploaded_files.ct_chest %}
+                    <img src="{{ url_for('static', filename=uploaded_files.ct_chest.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>CT Abdomen</td>
+                <td>
+                    {% if uploaded_files.ct_abdomen %}
+                    <img src="{{ url_for('static', filename=uploaded_files.ct_abdomen.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Bone Scan</td>
+                <td>
+                    {% if uploaded_files.bone_scan %}
+                    <img src="{{ url_for('static', filename=uploaded_files.bone_scan.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Pet Scan</td>
+                <td>
+                    {% if uploaded_files.pet_scan %}
+                    <img src="{{ url_for('static', filename=uploaded_files.pet_scan.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Hormonal Receptor</td>
+                <td>
+                    {% if uploaded_files.hormonal_receptor %}
+                    <img src="{{ url_for('static', filename=uploaded_files.hormonal_receptor.split('static/', 1)[1]) }}"
+                        alt="Chemotherapy Image">
+                    {% else %}
+                    <p>No image available</p>
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+</div>
+{% endblock %}

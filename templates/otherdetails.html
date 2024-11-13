@@ -1,0 +1,252 @@
+{% extends "base.html" %} 
+
+{% block title %}Other Details{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles1.css') }}">
+    <style>
+        /* Existing CSS Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #000;
+            background-color: #fff;
+            padding: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 2px solid #000;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #333;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #000;
+        }
+
+        label {
+            display: inline-block;
+            font-size: 16px;
+            color: #333;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .comments-label {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+            font-weight: normal;
+        }
+
+        input[type="radio"] {
+            margin: 0 8px 0 4px;
+            cursor: pointer;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #000;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="submit"] {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+            padding: 15px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Section Spacing */
+        form > div {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Flash Message Styles */
+        .flash-message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            color: #fff;
+        }
+
+        .flash-message.success {
+            background-color: #4CAF50; /* Green for success */
+        }
+
+        .flash-message.error {
+            background-color: #f44336; /* Red for error */
+        }
+
+        /* File input styles */
+        .file-upload {
+            display: none; /* Hide file input initially */
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <form method="POST" enctype="multipart/form-data">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <input type="hidden" name="UNID" value="{{ UNID }}"> <!-- Pass UNID here -->
+        
+        <h1>Other Details</h1>
+
+        <div>
+            <label>Hysterectomy</label>
+            <input type="radio" name="hysterectomy" value="yes" onclick="toggleFileInput('hysterectomy')"> Yes
+            <input type="radio" name="hysterectomy" value="no" onclick="toggleFileInput('hysterectomy')"> No
+            <label class="comments-label">Add Comments</label>
+            <input type="text" name="hysterectomy_comments" value="">
+            <input type="file" name="hysterectomy_image" accept=".pdf,.jpg,.jpeg,.png" class="file-upload" id="hysterectomy-file">
+        </div>
+
+        <div>
+            <label>Taking Hormones</label>
+            <label>Estrogen</label>
+            <input type="radio" name="estrogen" value="yes" onclick="toggleFileInput('estrogen')"> Yes
+            <input type="radio" name="estrogen" value="no" onclick="toggleFileInput('estrogen')"> No
+            <label class="comments-label">Add Comments</label>
+            <input type="text" name="estrogen_comments" value="">
+            <input type="file" name="estrogen_image" accept=".pdf,.jpg,.jpeg,.png" class="file-upload" id="estrogen-file">
+        </div>
+
+        <div>
+            <label>Progesterone</label>
+            <input type="radio" name="progesterone" value="yes" onclick="toggleFileInput('progesterone')"> Yes
+            <input type="radio" name="progesterone" value="no" onclick="toggleFileInput('progesterone')"> No
+            <label class="comments-label">Add Comments</label>
+            <input type="text" name="progesterone_comments" value="">
+            <input type="file" name="progesterone_image" accept=".pdf,.jpg,.jpeg,.png" class="file-upload" id="progesterone-file">
+        </div>
+
+        <div>
+            <label for="menstrual-age">Age at Menstrual Onset</label>
+            <input type="text" id="menstrual-age" name="menstrual_age" placeholder="Enter age or age bracket">
+        </div>
+
+        <div>
+            <label for="menopause-age">Age at Menopause</label>
+            <input type="text" id="menopause-age" name="menopause_age" placeholder="Enter age or age bracket">
+        </div>
+
+        <div>
+            <label for="pregnancy-count">Number of Pregnancies</label>
+            <select id="pregnancy-count" name="pregnancy_count" onchange="togglePregnancyDetails()">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+
+        <div id="pregnancy-details" style="display: none;">
+            <div>
+                <label for="first-pregnancy-age">Age at First Pregnancy</label>
+                <input type="text" id="first-pregnancy-age" name="first_pregnancy_age" placeholder="Enter age">
+            </div>
+
+            <div>
+                <label>Type of Delivery</label><br>
+                <input type="radio" id="delivery-normal" name="delivery_type" value="normal">
+                <label for="delivery-normal">Normal</label>
+                <input type="radio" id="delivery-surgery" name="delivery_type" value="surgery">
+                <label for="delivery-surgery">Surgery</label>
+            </div>
+
+            <div>
+                <label>Breastfeeding</label><br>
+                <input type="radio" id="breastfeeding-yes" name="breastfeeding" value="yes">
+                <label for="breastfeeding-yes">Yes</label>
+                <input type="radio" id="breastfeeding-no" name="breastfeeding" value="no">
+                <label for="breastfeeding-no">No</label>
+            </div>
+        </div>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <script>
+        function togglePregnancyDetails() {
+            const pregnancyCount = document.getElementById('pregnancy-count').value;
+            const pregnancyDetails = document.getElementById('pregnancy-details');
+            
+            if (pregnancyCount === "0") {
+                pregnancyDetails.style.display = 'none'; // Hide if 0
+            } else {
+                pregnancyDetails.style.display = 'block'; // Show if greater than 0
+            }
+        }
+
+        function toggleFileInput(name) {
+            const yesRadio = document.querySelector(`input[name="${name}"][value="yes"]`);
+            const fileInput = document.getElementById(`${name}-file`);
+
+            if (yesRadio.checked) {
+                fileInput.style.display = 'block'; // Show file input if 'Yes' is selected
+            } else {
+                fileInput.style.display = 'none'; // Hide file input if 'No' is selected
+            }
+        }
+    </script>
+{% endblock %}

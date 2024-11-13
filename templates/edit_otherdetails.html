@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Other Details{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles1.css') }}">
+    <style>
+        /* Existing CSS Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #000;
+            background-color: #fff;
+            padding: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 2px solid #000;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #333;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #000;
+        }
+
+        label {
+            display: inline-block;
+            font-size: 16px;
+            color: #333;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .comments-label {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+            font-weight: normal;
+        }
+
+        input[type="radio"] {
+            margin: 0 8px 0 4px;
+            cursor: pointer;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #000;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="submit"] {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+            padding: 15px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Section Spacing */
+        form > div {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Flash Message Styles */
+        .flash-message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            color: #fff;
+        }
+
+        .flash-message.success {
+            background-color: #4CAF50; /* Green for success */
+        }
+
+        .flash-message.error {
+            background-color: #f44336; /* Red for error */
+        }
+
+        /* File input styles */
+        .file-upload {
+            display: none; /* Hide file input initially */
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('edit_otherdetails', unid=UNID) }}">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <input type="hidden" name="UNID" value="{{ UNID }}"> <!-- Pass UNID here -->
+
+        <h1>Edit Other Details</h1>
+
+        <div>
+            <label>Hysterectomy</label>
+            <input type="radio" name="hysterectomy" value="yes" onclick="toggleFileInput('hysterectomy')" {% if other_details.hysterectomy == 'yes' %}checked{% endif %}> Yes
+            <input type="radio" name="hysterectomy" value="no" onclick="toggleFileInput('hysterectomy')" {% if other_details.hysterectomy == 'no' %}checked{% endif %}> No
+            <label class="comments-label">Add Comments</label>
+            <input type="text" name="hysterectomy_comments" value="{{ other_details.hysterectomy_comments }}">
+            <input type="file" name="hysterectomy_image" accept=".pdf,.jpg,.jpeg,.png" class="file-upload" id="hysterectomy-file" {% if other_details.hysterectomy_image %}style="display:block"{% endif %}>
+        </div>
+
+        <div>
+            <label>Taking Hormones</label>
+            <label>Estrogen</label>
+            <input type="radio" name="estrogen" value="yes" onclick="toggleFileInput('estrogen')" {% if other_details.estrogen == 'yes' %}checked{% endif %}> Yes
+            <input type="radio" name="estrogen" value="no" onclick="toggleFileInput('estrogen')" {% if other_details.estrogen == 'no' %}checked{% endif %}> No
+            <label class="comments-label">Add Comments</label>
+            <input type="text" name="estrogen_comments" value="{{ other_details.estrogen_comments }}">
+            <input type="file" name="estrogen_image" accept=".pdf,.jpg,.jpeg,.png" class="file-upload" id="estrogen-file" {% if other_details.estrogen_image %}style="display:block"{% endif %}>
+        </div>
+
+        <div>
+            <label>Progesterone</label>
+            <input type="radio" name="progesterone" value="yes" onclick="toggleFileInput('progesterone')" {% if other_details.progesterone == 'yes' %}checked{% endif %}> Yes
+            <input type="radio" name="progesterone" value="no" onclick="toggleFileInput('progesterone')" {% if other_details.progesterone == 'no' %}checked{% endif %}> No
+            <label class="comments-label">Add Comments</label>
+            <input type="text" name="progesterone_comments" value="{{ other_details.progesterone_comments }}">
+            <input type="file" name="progesterone_image" accept=".pdf,.jpg,.jpeg,.png" class="file-upload" id="progesterone-file" {% if other_details.progesterone_image %}style="display:block"{% endif %}>
+        </div>
+
+        <div>
+            <label for="menstrual-age">Age at Menstrual Onset</label>
+            <input type="text" id="menstrual-age" name="menstrual_age" value="{{ other_details.menstrual_age }}" placeholder="Enter age or age bracket">
+        </div>
+
+        <div>
+            <label for="menopause-age">Age at Menopause</label>
+            <input type="text" id="menopause-age" name="menopause_age" value="{{ other_details.menopause_age }}" placeholder="Enter age or age bracket">
+        </div>
+
+        <div>
+            <label for="pregnancy-count">Number of Pregnancies</label>
+            <select id="pregnancy-count" name="pregnancy_count" onchange="togglePregnancyDetails()">
+                <option value="0" {% if other_details.pregnancy_count == 0 %}selected{% endif %}>0</option>
+                <option value="1" {% if other_details.pregnancy_count == 1 %}selected{% endif %}>1</option>
+                <option value="2" {% if other_details.pregnancy_count == 2 %}selected{% endif %}>2</option>
+                <option value="3" {% if other_details.pregnancy_count == 3 %}selected{% endif %}>3</option>
+                <option value="4" {% if other_details.pregnancy_count == 4 %}selected{% endif %}>4</option>
+                <option value="5" {% if other_details.pregnancy_count == 5 %}selected{% endif %}>5</option>
+            </select>
+        </div>
+
+        <div id="pregnancy-details" style="display: {% if other_details.pregnancy_count > 0 %}block{% else %}none{% endif %};">
+            <div>
+                <label for="first-pregnancy-age">Age at First Pregnancy</label>
+                <input type="text" id="first-pregnancy-age" name="first_pregnancy_age" value="{{ other_details.first_pregnancy_age }}" placeholder="Enter age">
+            </div>
+
+            <div>
+                <label>Type of Delivery</label><br>
+                <input type="radio" name="delivery_type" value="normal" {% if other_details.delivery_type == 'normal' %}checked{% endif %}> Normal
+                <input type="radio" name="delivery_type" value="surgery" {% if other_details.delivery_type == 'surgery' %}checked{% endif %}> Surgery
+            </div>
+
+            <div>
+                <label>Breastfeeding</label><br>
+                <input type="radio" name="breastfeeding" value="yes" {% if other_details.breastfeeding == 'yes' %}checked{% endif %}> Yes
+                <input type="radio" name="breastfeeding" value="no" {% if other_details.breastfeeding == 'no' %}checked{% endif %}> No
+            </div>
+            
+        </div>
+
+        
+        <input type="submit" value="Save Changes">
+    </form>
+
+    <script>
+        function toggleFileInput(detail) {
+            const fileInput = document.getElementById(detail + '-file');
+            const radioYes = document.querySelector(`input[name="${detail}"][value="yes"]`);
+            const radioNo = document.querySelector(`input[name="${detail}"][value="no"]`);
+
+            if (radioYes.checked) {
+                fileInput.style.display = 'block';
+            } else {
+                fileInput.style.display = 'none';
+            }
+        }
+
+        function togglePregnancyDetails() {
+            const pregnancyCount = document.getElementById('pregnancy-count').value;
+            const pregnancyDetails = document.getElementById('pregnancy-details');
+            pregnancyDetails.style.display = pregnancyCount > 0 ? 'block' : 'none';
+        }
+    </script>
+{% endblock %}
